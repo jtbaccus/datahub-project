@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Finance - DataHub{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-8">Finance</h1>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Spending by Category -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h2 class="text-xl font-semibold mb-4">Spending by Category (Last 30 Days)</h2>
+        {% if spending_by_cat %}
+        <div class="space-y-3">
+            {% for row in spending_by_cat %}
+            <div class="flex justify-between items-center">
+                <span class="text-gray-300">{{ row.category or 'Uncategorized' }}</span>
+                <span class="text-red-400">${{ "{:,.2f}".format(row.total | abs) }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-400">No spending data yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Spending Chart -->
+    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+        <h2 class="text-xl font-semibold mb-4">Daily Spending</h2>
+        <canvas id="spendingChart" height="200"></canvas>
+    </div>
+</div>
+
+<!-- Transactions Table -->
+<div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+    <h2 class="text-xl font-semibold mb-4">Recent Transactions</h2>
+    {% if recent_txns %}
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead>
+                <tr class="text-left text-gray-400 text-sm border-b border-gray-700">
+                    <th class="pb-2">Date</th>
+                    <th class="pb-2">Description</th>
+                    <th class="pb-2">Category</th>
+                    <th class="pb-2 text-right">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in recent_txns %}
+                <tr class="border-b border-gray-700/50 hover:bg-gray-700/30">
+                    <td class="py-3 text-gray-400">{{ txn.date.strftime('%Y-%m-%d') }}</td>
+                    <td class="py-3">{{ txn.description[:50] }}{% if txn.description|length > 50 %}...{% endif %}</td>
+                    <td class="py-3 text-gray-400">{{ txn.category or '-' }}</td>
+                    <td class="py-3 text-right {% if txn.amount < 0 %}text-red-400{% else %}text-green-400{% endif %}">
+                        ${{ "{:,.2f}".format(txn.amount) }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-gray-400">No transactions yet. Import bank CSV data to see your transactions.</p>
+    <div class="mt-4">
+        <h3 class="font-semibold text-white">How to Import</h3>
+        <code class="text-xs bg-gray-700 px-2 py-1 rounded mt-2 inline-block">datahub import bank-csv statement.csv --format chase</code>
+        <p class="text-sm text-gray-400 mt-2">Supported formats: chase, bofa, apple_card, amex, generic</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    const spendingData = {{ daily_spending | tojson }};
+    const labels = spendingData.map(d => d.date);
+    const values = spendingData.map(d => Math.abs(d.total));
+
+    new Chart(document.getElementById('spendingChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Spending',
+                data: values,
+                borderColor: 'rgb(248, 113, 113)',
+                backgroundColor: 'rgba(248, 113, 113, 0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255,255,255,0.1)' },
+                    ticks: {
+                        color: '#9ca3af',
+                        callback: function(value) { return '$' + value; }
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#9ca3af' }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

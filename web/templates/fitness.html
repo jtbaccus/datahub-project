@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Fitness - DataHub{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-8">Fitness</h1>
+
+<!-- Tonal Strength Training -->
+{% if strength_workouts %}
+<div class="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-8">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Tonal Strength Training</h2>
+        {% if total_volume %}
+        <div class="text-right">
+            <div class="text-2xl font-bold text-purple-400">{{ "{:,}".format(total_volume) }} lbs</div>
+            <div class="text-sm text-gray-400">Volume (30 days)</div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for workout in strength_workouts[:9] %}
+        <div class="bg-gray-700/50 rounded-lg p-4">
+            <div class="text-gray-400 text-sm">{{ workout.timestamp.strftime('%b %d, %Y') }}</div>
+            <div class="text-lg font-semibold mt-1">{{ workout.get('name', 'Strength Workout') }}</div>
+            <div class="flex gap-4 mt-2 text-sm">
+                <span class="text-purple-400">{{ workout.duration | int }} min</span>
+                {% if workout.get('total_volume_lbs') %}
+                <span class="text-gray-400">{{ "{:,}".format(workout.total_volume_lbs) }} lbs</span>
+                {% endif %}
+                {% if workout.get('total_sets') %}
+                <span class="text-gray-400">{{ workout.total_sets }} sets</span>
+                {% endif %}
+            </div>
+            {% if workout.get('instructor') %}
+            <div class="text-xs text-gray-500 mt-1">{{ workout.instructor }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- All Workouts -->
+<div class="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-8">
+    <h2 class="text-xl font-semibold mb-4">Recent Workouts</h2>
+    {% if workouts %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for workout in workouts[:12] %}
+        <div class="bg-gray-700/50 rounded-lg p-4">
+            <div class="text-gray-400 text-sm">{{ workout.timestamp.strftime('%b %d, %Y') }}</div>
+            <div class="text-lg font-semibold mt-1">{{ workout.value | int }} min</div>
+            <div class="text-sm text-gray-400">{{ workout.source }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-400">No workouts yet. Import Apple Health data, sync Peloton, or sync Tonal to see your workouts.</p>
+    {% endif %}
+</div>
+
+<!-- Data Sources -->
+<div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+    <h2 class="text-xl font-semibold mb-4">How to Add Fitness Data</h2>
+    <div class="space-y-4 text-gray-300">
+        <div>
+            <h3 class="font-semibold text-white">Apple Health (Apple Watch, Oura)</h3>
+            <p class="text-sm text-gray-400">Export from iPhone: Health app > Profile > Export All Health Data</p>
+            <code class="text-xs bg-gray-700 px-2 py-1 rounded mt-1 inline-block">datahub import apple-health export.xml</code>
+        </div>
+        <div>
+            <h3 class="font-semibold text-white">Peloton</h3>
+            <p class="text-sm text-gray-400">Configure your credentials and sync</p>
+            <code class="text-xs bg-gray-700 px-2 py-1 rounded mt-1 inline-block">datahub sync peloton</code>
+        </div>
+        <div>
+            <h3 class="font-semibold text-white">Tonal</h3>
+            <p class="text-sm text-gray-400">Configure your credentials and sync strength workouts</p>
+            <code class="text-xs bg-gray-700 px-2 py-1 rounded mt-1 inline-block">datahub config tonal.email you@email.com</code>
+            <code class="text-xs bg-gray-700 px-2 py-1 rounded mt-1 inline-block ml-2">datahub sync tonal</code>
+        </div>
+        <div>
+            <h3 class="font-semibold text-white">Oura Ring</h3>
+            <p class="text-sm text-gray-400">Get your token from cloud.ouraring.com/personal-access-tokens</p>
+            <code class="text-xs bg-gray-700 px-2 py-1 rounded mt-1 inline-block">datahub sync oura</code>
+        </div>
+    </div>
+</div>
+{% endblock %}
