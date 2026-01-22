@@ -2,6 +2,8 @@
 
 A Python-based personal data aggregator that pulls fitness and finance data into a unified local system.
 
+**Repository:** https://github.com/jtbaccus/datahub-project
+
 ## Project Overview
 
 **Core Purpose:** Aggregate scattered personal data (fitness metrics, financial transactions) into one queryable, visualizable hub.
@@ -28,6 +30,7 @@ A Python-based personal data aggregator that pulls fitness and finance data into
 | Styling | Tailwind CSS (CDN) |
 | Charts | Chart.js |
 | Interactivity | HTMX |
+| Testing | pytest + pytest-cov |
 
 ## Project Structure
 
@@ -39,6 +42,7 @@ datahub-project/
 │   ├── cli.py                  # CLI with 12+ commands
 │   ├── db.py                   # SQLAlchemy models (DataPoint, Transaction, SyncLog)
 │   ├── config.py               # JSON-based config management
+│   ├── dedup.py                # Multi-source deduplication logic
 │   └── connectors/
 │       ├── base.py             # Abstract connector interface
 │       ├── fitness/
@@ -56,7 +60,11 @@ datahub-project/
 │       ├── dashboard.html      # Stats, charts, recent activity
 │       ├── fitness.html        # Workout history
 │       └── finance.html        # Spending breakdown
-└── tests/                      # Test directory
+└── tests/
+    ├── conftest.py             # Shared fixtures (test_session, temp_config)
+    ├── test_config.py          # Config management tests (22 tests)
+    ├── test_db.py              # Database model tests (24 tests)
+    └── test_dedup.py           # Deduplication logic tests (22 tests)
 ```
 
 ## CLI Commands
@@ -144,8 +152,43 @@ SQLite database stored at `~/.datahub/datahub.db`. Three main models:
 3. Implement the `sync()` method
 4. Register the connector in `cli.py`
 
+## Development
+
+```bash
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate
+
+# Install with dev dependencies
+pip install -e ".[dev]"
+
+# Run tests
+pytest tests/ -v
+
+# Run with coverage
+pytest tests/ --cov=datahub --cov-report=term-missing
+```
+
+### Test Coverage (as of 2025-01-21)
+
+| Module | Coverage | Tests |
+|--------|----------|-------|
+| `datahub/config.py` | 100% | 22 |
+| `datahub/db.py` | 100% | 24 |
+| `datahub/dedup.py` | 97% | 22 |
+| **Total** | **68 tests passing** | |
+
 ## Next Steps
 
+See [TODO.md](TODO.md) for detailed roadmap.
+
+### Near-term
+- [ ] Add tests for CSV import connector
+- [ ] Add tests for Apple Health connector
+- [ ] Add tests for web routes
+- [ ] Add tests for CLI commands
+
+### Future Features
 - **Calendar integration** - Google Calendar, Apple Calendar
 - **Interactive charts** - Date range selection, trend comparisons
 - **Natural language queries** - Ask questions about your data
