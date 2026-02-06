@@ -14,7 +14,7 @@ Usage:
 """
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 import httpx
@@ -222,9 +222,9 @@ class TonalConnector(BaseConnector):
                 else:
                     start_time = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
             except (ValueError, TypeError):
-                start_time = datetime.utcnow()
+                start_time = datetime.now(timezone.utc)
         else:
-            start_time = datetime.utcnow()
+            start_time = datetime.now(timezone.utc)
 
         # Make timestamp naive for SQLite compatibility
         if start_time.tzinfo is not None:

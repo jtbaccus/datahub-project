@@ -1,7 +1,7 @@
 """Base connector interface for all data sources."""
 
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from sqlalchemy.orm import Session
@@ -35,7 +35,7 @@ class BaseConnector(ABC):
         """Record the start of a sync operation."""
         log = SyncLog(
             connector=self.name,
-            started_at=datetime.utcnow(),
+            started_at=datetime.now(timezone.utc),
             status="running",
         )
         self.session.add(log)
@@ -44,7 +44,7 @@ class BaseConnector(ABC):
 
     def _complete_sync(self, log: SyncLog, added: int, updated: int) -> None:
         """Record successful completion of a sync."""
-        log.completed_at = datetime.utcnow()
+        log.completed_at = datetime.now(timezone.utc)
         log.status = "success"
         log.records_added = added
         log.records_updated = updated
@@ -52,7 +52,7 @@ class BaseConnector(ABC):
 
     def _fail_sync(self, log: SyncLog, error: str) -> None:
         """Record failed sync."""
-        log.completed_at = datetime.utcnow()
+        log.completed_at = datetime.now(timezone.utc)
         log.status = "failed"
         log.error_message = error
         self.session.commit()

@@ -237,17 +237,20 @@ class TestStatsAPI:
         session = SessionLocal()
 
         now = datetime.now()
+        # Use a base time pinned to the start of an hour to guarantee both
+        # data points fall in the same hour bucket for deduplication.
+        base = now.replace(minute=0, second=0, microsecond=0) - timedelta(days=1)
         # Create overlapping step data from different sources in the same hour
         steps = [
             DataPoint(
-                timestamp=now - timedelta(days=1, hours=2),
+                timestamp=base + timedelta(minutes=10),
                 data_type="steps",
                 value=1000.0,
                 unit="count",
                 source="apple_watch",  # Higher priority
             ),
             DataPoint(
-                timestamp=now - timedelta(days=1, hours=2, minutes=30),
+                timestamp=base + timedelta(minutes=40),
                 data_type="steps",
                 value=900.0,
                 unit="count",

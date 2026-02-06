@@ -13,7 +13,7 @@ Usage:
 """
 
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import httpx
 from sqlalchemy import select
@@ -251,10 +251,10 @@ class OuraConnector(BaseConnector):
     def sync(self, since: datetime | None = None) -> tuple[int, int]:
         """Sync all Oura data."""
         if since is None:
-            since = datetime.utcnow() - timedelta(days=30)
+            since = datetime.now(timezone.utc) - timedelta(days=30)
 
         start_date = since.strftime("%Y-%m-%d")
-        end_date = datetime.utcnow().strftime("%Y-%m-%d")
+        end_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
         added = 0
         skipped = 0

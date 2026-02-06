@@ -1,6 +1,6 @@
 """Database models for DataHub."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 
@@ -50,7 +50,7 @@ class DataPoint(Base):
     source: Mapped[str] = mapped_column(index=True)  # e.g., "apple_health", "oura", "peloton"
     source_id: Mapped[str | None] = mapped_column(default=None)  # Original ID from source
     metadata_json: Mapped[str | None] = mapped_column(default=None)  # Extra data as JSON
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         Index("ix_datapoint_type_time", "data_type", "timestamp"),
@@ -73,7 +73,7 @@ class Transaction(Base):
     source: Mapped[str] = mapped_column(index=True)  # e.g., "chase_csv", "plaid"
     source_id: Mapped[str | None] = mapped_column(default=None)
     metadata_json: Mapped[str | None] = mapped_column(default=None)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         Index("ix_transaction_date_amount", "date", "amount"),

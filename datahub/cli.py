@@ -1,6 +1,6 @@
 """Command-line interface for DataHub."""
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import click
@@ -180,7 +180,7 @@ def sync_peloton(ctx, days: int | None):
 
     since = None
     if days:
-        since = datetime.utcnow() - timedelta(days=days)
+        since = datetime.now(timezone.utc) - timedelta(days=days)
 
     try:
         log = connector.run_sync(since)
@@ -221,7 +221,7 @@ def sync_oura(ctx, days: int):
     session = get_session(db_path)
     connector = OuraConnector(session, config=oura_config)
 
-    since = datetime.utcnow() - timedelta(days=days)
+    since = datetime.now(timezone.utc) - timedelta(days=days)
 
     try:
         log = connector.run_sync(since)
@@ -266,7 +266,7 @@ def sync_tonal(ctx, days: int | None):
 
     since = None
     if days:
-        since = datetime.utcnow() - timedelta(days=days)
+        since = datetime.now(timezone.utc) - timedelta(days=days)
 
     try:
         log = connector.run_sync(since)
@@ -327,7 +327,7 @@ def sync_simplefin(ctx, days: int, setup_token: str | None):
     session = get_session(db_path)
     connector = SimpleFINConnector(session, config=simplefin_config)
 
-    since = datetime.utcnow() - timedelta(days=days)
+    since = datetime.now(timezone.utc) - timedelta(days=days)
 
     try:
         log = connector.run_sync(since)
@@ -456,7 +456,7 @@ def query(ctx, data_type: str, days: int):
         return
 
     session = get_session(db_path)
-    since = datetime.utcnow() - timedelta(days=days)
+    since = datetime.now(timezone.utc) - timedelta(days=days)
 
     stmt = (
         select(DataPoint)
@@ -539,7 +539,7 @@ def transactions(ctx, days: int, category: str | None, limit: int):
         return
 
     session = get_session(db_path)
-    since = datetime.utcnow() - timedelta(days=days)
+    since = datetime.now(timezone.utc) - timedelta(days=days)
 
     stmt = (
         select(Transaction)
@@ -594,7 +594,7 @@ def spending(ctx, days: int):
         return
 
     session = get_session(db_path)
-    since = datetime.utcnow() - timedelta(days=days)
+    since = datetime.now(timezone.utc) - timedelta(days=days)
 
     stmt = (
         select(
@@ -750,7 +750,7 @@ def export(ctx, output_format: str, data_type: str | None, days: int, output: st
         return
 
     session = get_session(db_path)
-    since = datetime.utcnow() - timedelta(days=days)
+    since = datetime.now(timezone.utc) - timedelta(days=days)
 
     # Build query
     stmt = select(DataPoint).where(DataPoint.timestamp >= since)
@@ -780,7 +780,7 @@ def export(ctx, output_format: str, data_type: str | None, days: int, output: st
     if output:
         output_path = Path(output)
     else:
-        timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         type_suffix = f"_{data_type}" if data_type else ""
         output_path = Path(f"datahub_export{type_suffix}_{timestamp}.{output_format}")
 

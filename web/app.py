@@ -135,8 +135,7 @@ async def dashboard(request: Request):
 
     session.close()
 
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "dashboard.html", {
         "steps_week": int(steps_week),
         "workouts_week": workouts_week,
         "spending_month": abs(spending_month),
@@ -218,8 +217,7 @@ async def fitness(request: Request):
 
     session.close()
 
-    return templates.TemplateResponse("fitness.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "fitness.html", {
         "workouts": workouts,
         "daily_data": daily_data,
         "strength_workouts": strength_details,
@@ -276,8 +274,7 @@ async def finance(request: Request):
 
     session.close()
 
-    return templates.TemplateResponse("finance.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "finance.html", {
         "spending_by_cat": spending_by_cat,
         "recent_txns": recent_txns,
         "daily_spending": daily_spending,

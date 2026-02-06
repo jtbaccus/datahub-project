@@ -16,7 +16,7 @@ Usage:
 
 import base64
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
 
 import httpx
@@ -157,9 +157,9 @@ class SimpleFINConnector(BaseConnector):
             Tuple of (records_added, records_skipped)
         """
         if since is None:
-            since = datetime.utcnow() - timedelta(days=30)
+            since = datetime.now(timezone.utc) - timedelta(days=30)
 
-        end_date = datetime.utcnow()
+        end_date = datetime.now(timezone.utc)
 
         # Fetch accounts and transactions
         data = self._fetch_accounts(since, end_date)

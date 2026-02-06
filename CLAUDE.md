@@ -169,24 +169,29 @@ pytest tests/ -v
 pytest tests/ --cov=datahub --cov-report=term-missing
 ```
 
-### Test Coverage (as of 2025-01-21)
+### Test Coverage (as of 2026-02-06)
 
 | Module | Coverage | Tests |
 |--------|----------|-------|
 | `datahub/config.py` | 100% | 22 |
 | `datahub/db.py` | 100% | 24 |
 | `datahub/dedup.py` | 97% | 22 |
-| **Total** | **68 tests passing** | |
+| `datahub/cli.py` | 69% | 57 |
+| `web/app.py` | 84% | 24 |
+| `connectors/fitness/apple_health.py` | 92% | 52 |
+| `connectors/finance/csv_import.py` | 95% | 10 |
+| **Total** | **211 tests passing, 57% overall** | |
 
 ## Next Steps
 
 See [TODO.md](TODO.md) for detailed roadmap.
 
 ### Near-term
-- [ ] Add tests for CSV import connector
-- [ ] Add tests for Apple Health connector
-- [ ] Add tests for web routes
-- [ ] Add tests for CLI commands
+- [x] Add tests for CSV import connector
+- [x] Add tests for Apple Health connector
+- [x] Add tests for web routes
+- [x] Add tests for CLI commands
+- [ ] Add tests for API connectors (Peloton, Oura, Tonal, SimpleFIN)
 
 ### Future Features
 - **Calendar integration** - Google Calendar, Apple Calendar

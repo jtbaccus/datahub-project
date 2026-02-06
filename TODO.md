@@ -47,19 +47,24 @@
   - [ ] Source detection (Apple Watch vs iPhone)
   - [ ] Duplicate prevention
 
-## Backlog
-
 ### Phase 4: Test Suite (Phase 3 - Web & CLI)
-- [ ] `tests/web/test_app.py`
-  - [ ] Dashboard route (GET /)
-  - [ ] Fitness route (GET /fitness)
-  - [ ] Finance route (GET /finance)
-  - [ ] Stats API (GET /api/stats)
+- [x] `tests/web/test_app.py` - 24 tests
+  - [x] Dashboard route (GET /)
+  - [x] Fitness route (GET /fitness)
+  - [x] Finance route (GET /finance)
+  - [x] Stats API (GET /api/stats)
 
-- [ ] `tests/test_cli.py`
-  - [ ] init command
-  - [ ] status command
-  - [ ] config get/set commands
+- [x] `tests/test_cli.py`
+  - [x] init command
+  - [x] status command
+  - [x] config get/set commands
+
+### Code Quality
+- [x] Replace all `datetime.utcnow()` with `datetime.now(timezone.utc)` (Python 3.12+ deprecation)
+- [x] Update Starlette `TemplateResponse` to new API signature
+- [x] Upgrade `anyio` for Python 3.14 compatibility
+
+## Backlog
 
 ### Phase 5: Enhanced Features
 - [ ] Calendar integration (Google Calendar, Apple Calendar)
@@ -84,7 +89,6 @@ The deduplication module (`datahub/dedup.py`) handles overlapping data from mult
 - Source priorities are data-type specific (e.g., Oura best for sleep, Apple Watch best for steps)
 
 ### Known Issues
-- SQLAlchemy `datetime.utcnow()` deprecation warnings (cosmetic, from SQLAlchemy internals)
 - Tonal API is unofficial and may break if they change their API
 
 ### Testing Commands
