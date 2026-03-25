@@ -1,6 +1,6 @@
-# codex.md - DataHub
+# AGENTS.md - DataHub
 
-Inherit the workspace rules from `/home/jtbaccus/turing/codex.md`.
+Inherit the workspace rules from `/home/jtbaccus/turing/AGENTS.md`.
 
 ## Project Profile
 - Personal data hub for local-first aggregation of fitness and finance data.
